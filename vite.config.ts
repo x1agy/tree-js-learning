@@ -3,6 +3,8 @@ import { resolve } from 'path';
 
 export default defineConfig({
   root: __dirname,
+  publicDir: './src/public',
+  base: './',
   build: {
     outDir: 'dist',
     rollupOptions: {
