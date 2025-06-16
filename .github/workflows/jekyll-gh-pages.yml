@@ -2,7 +2,7 @@ name: Deploy Jekyll site to GitHub Pages
 
 on:
   push:
-    branches: [ master ] # Или 'master', в зависимости от вашей ветки
+    branches: [master] # Или 'master', в зависимости от вашей ветки
 
 jobs:
   deploy:
@@ -11,28 +11,25 @@ jobs:
       contents: write # Даёт доступ к записи в ветку gh-pages
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive # Важно для тем Jekyll, установленных через Git
+      - uses: actions/checkout@v4
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.0' # Укажите версию Ruby из вашего .ruby-version
-          bundler-cache: true # Кэширует gems для ускорения сборки
+          ruby-version: '3.0'
+          bundler-cache: true
 
-      - name: Install Jekyll and dependencies
+      - name: Create Gemfile if missing
+        run: |
+          if [ ! -f Gemfile ]; then
+            echo 'source "https://rubygems.org"' > Gemfile
+            echo 'gem "jekyll"' >> Gemfile
+          fi
+
+      - name: Install dependencies
         run: |
           gem install bundler
           bundle install
 
       - name: Build with Jekyll
-        run: bundle exec jekyll build --baseurl "" # Удаляет /REPO_NAME из URL
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_site # Папка, куда Jekyll собирает сайт
-          keep_files: false # Очищает ветку gh-pages перед деплоем
+        run: bundle exec jekyll build --baseurl ""
