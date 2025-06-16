@@ -10,7 +10,6 @@ jobs:
     permissions:
       contents: write
       pages: write
-      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -18,19 +17,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install dependencies
         run: npm install
 
       - name: Build project
         run: npm run build
-
-      - name: Create docs folder
-        run: |
-          mkdir -p docs
-          cp -R dist/* docs/
-          touch docs/.nojekyll
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v2
